@@ -1,0 +1,34 @@
+import {  useState } from "react";
+import AddEntryModal from "../components/AddEntryModal";
+import { EntryTable } from "../components/EntryTable";
+import { GoalTable } from "../components/GoalTable";
+
+
+
+export function InitialPage() {
+    const [open, setOpen] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+
+
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Today's Entries</h1>
+      <GoalTable refreshKey={refreshKey} />
+      <EntryTable refreshKey={refreshKey} onSaved={() => setRefreshKey((k) => k + 1)}/>
+      
+        <button
+        onClick={() => setOpen(true)}
+        className="bg-black text-white px-5 py-3 rounded-2xl"
+      >
+        Add Entry
+      </button>
+
+      <AddEntryModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onSaved={() => setRefreshKey((k) => k + 1)}
+      />
+    </div>
+  );
+}
