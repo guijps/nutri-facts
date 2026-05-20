@@ -32,6 +32,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("Default"));
 });
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<OpenFoodParser>();
+builder.Services.AddScoped<OpenFoodSearchEngine>();
 builder.Services.AddSingleton<BarcodeRepository>();
 builder.Services.AddSingleton<JwtService>();
 builder.Services.AddScoped<BarcodeService>();

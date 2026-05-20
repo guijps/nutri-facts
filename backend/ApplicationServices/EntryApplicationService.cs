@@ -17,11 +17,18 @@ public class EntryApplicationService
     {
         _service.Update(entryId, quantity);
     }
-    public void Add(string entryId, double quantity)
+    public async Task AddAsync(string entryId, double quantity)
     {
-        var product = _barcodeService.GetProductByBarcode(entryId);
-        var entry = new ProductEntry( product, quantity);
-        _service.Add(entry);
+        var product = await _barcodeService.GetProductByBarcodeAsync(entryId);
+        if (product != null)
+        {
+            var entry = new ProductEntry(product, quantity);
+            _service.Add(entry);
+        }
+        else
+        {
+            throw new Exception("Product not found for the given barcode.");
+        }
     }
     public void Delete(string entryIdString)
     {
@@ -34,7 +41,7 @@ public class EntryApplicationService
         // Logic to filter entries for today and calculate nutrition facts
         double totalCarbs = entries.Sum(e => e.NutritionFacts.Carbohydrates);
         double totalFat = entries.Sum(e => e.NutritionFacts.Fat);
-        double totalProtein = entries.Sum(e => e.NutritionFacts.Protein);
+        double totalProtein = entries.Sum(e => e.NutritionFacts.Proteins);
         double totalCalories = entries.Sum(e => e.NutritionFacts.Calories);
 
 
@@ -42,7 +49,7 @@ public class EntryApplicationService
         {
             Carbohydrates = totalCarbs,
             Fat = totalFat,
-            Protein = totalProtein,
+            Proteins = totalProtein,
             Calories = totalCalories
         };
     }

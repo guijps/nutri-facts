@@ -29,9 +29,9 @@ public class EntryController : ControllerBase
 
 
     [HttpPost("/set")]
-    public IActionResult Set(string code, double quantity)
+    public async Task<IActionResult> Set(string code, double quantity)
     {
-        _entryApplicationService.Add(code, quantity);
+        await _entryApplicationService.AddAsync(code, quantity);
         return Ok();
     }
     [HttpGet("/all")]

@@ -35,8 +35,7 @@ export default function AddEntryModal({
 
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-black"
-          >
+            className="text-gray-500 hover:text-black">
             X
           </button>
         </div>

@@ -72,7 +72,7 @@ export function EntryRow
                 <p className="text-gray-500">Carbs</p>
               </div>
               <div className="bg-gray-100 rounded-xl p-2">
-                <p className="font-medium">{entry.nutritionFacts.protein.toFixed(1)}g</p>
+                <p className="font-medium">{entry.nutritionFacts.proteins.toFixed(1)}g</p>
                 <p className="text-gray-500">Protein</p>
               </div>
               <div className="bg-gray-100 rounded-xl p-2">

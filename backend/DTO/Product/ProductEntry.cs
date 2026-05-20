@@ -37,7 +37,7 @@ public class ProductEntry : IProductEntry
         {
             Carbohydrates = Product.NutritionFacts.Carbohydrates * _quantity,
             Fat = Product.NutritionFacts.Fat * _quantity,
-            Protein = Product.NutritionFacts.Protein * _quantity,
+            Proteins = Product.NutritionFacts.Proteins * _quantity,
             Calories = Product.NutritionFacts.Calories * _quantity
         };
     }

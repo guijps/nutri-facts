@@ -7,9 +7,9 @@ public class BarcodeApplicationService
         _service = service;
     }
 
-    public IProduct? GetProductByBarcode(string barcode)
+    public async Task<IProduct?> GetProductByBarcodeAsync(string barcode)
     {
-        return _service.GetProductByBarcode(barcode);
+        return await _service.GetProductByBarcodeAsync(barcode);
     }
 
     public void AddProduct(IProduct product)

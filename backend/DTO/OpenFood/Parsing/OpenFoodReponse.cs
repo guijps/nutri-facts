@@ -1,0 +1,11 @@
+using System.Text.Json.Serialization;
+
+public class OpenFoodReponse
+{
+    [JsonPropertyName("code")]
+    public string Id { get; set; }
+    
+    [JsonPropertyName("product")]
+    public ProductData? Product { get; set; }
+    
+}

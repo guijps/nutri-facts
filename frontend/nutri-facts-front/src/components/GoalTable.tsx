@@ -5,9 +5,9 @@ import type { NutritionFacts, ProductEntry } from "../types/product";
 
 const DAILY_GOAL: ProductEntry = {
   id: "goal",
-  product: { name: "Daily Goal", nutritionFacts: { calories: 2000, carbohydrates: 250, fat: 65, protein: 50 } },
+  product: { name: "Daily Goal", nutritionFacts: { calories: 2000, carbohydrates: 250, fat: 65, proteins: 50 } },
   quantity: 0,
-  nutritionFacts: { calories: 2000, carbohydrates: 250, fat: 65, protein: 50 },
+  nutritionFacts: { calories: 2000, carbohydrates: 250, fat: 65, proteins: 50 },
 };
 
 function buildTodayEntry(facts: NutritionFacts): ProductEntry {

@@ -9,7 +9,7 @@ function sanitizeEntry(entry: ProductEntry): ProductEntry {
     calories: n(f?.calories),
     carbohydrates: n(f?.carbohydrates),
     fat: n(f?.fat),
-    protein: n(f?.protein),
+    proteins: n(f?.proteins),
   });
   return {
     ...entry,

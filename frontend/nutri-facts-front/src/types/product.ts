@@ -2,7 +2,7 @@ export interface NutritionFacts {
   calories: number;
   carbohydrates: number;
   fat: number;
-  protein: number;
+  proteins: number;
 }
 
 export interface Product {

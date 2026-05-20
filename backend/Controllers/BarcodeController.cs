@@ -14,9 +14,9 @@ public class BarcodeController : ControllerBase
     }
 
     [HttpGet("{barcode}")]
-    public IActionResult GetByBarcode(string barcode)
+    public async Task<IActionResult> GetByBarcode(string barcode)
     {
-        var product = _barcodeApplicationService.GetProductByBarcode(barcode);
+        var product = await _barcodeApplicationService.GetProductByBarcodeAsync(barcode);
         if (product == null)
         {
             return NotFound();

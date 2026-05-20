@@ -1,4 +1,4 @@
-import type { ProductEntry } from "../types/product";
+import type { NutritionFacts, ProductEntry } from "../types/product";
 
 type Props = {
   first: ProductEntry;
@@ -20,8 +20,8 @@ function EntryCard({ entry }: { entry: ProductEntry }) {
           <p className="text-gray-500">Carbs</p>
         </div>
         <div className="bg-gray-100 rounded-xl p-2">
-          <p className="font-medium">{entry.nutritionFacts.protein.toFixed(1)}g</p>
-          <p className="text-gray-500">Protein</p>
+          <p className="font-medium">{entry.nutritionFacts.proteins.toFixed(1)}g</p>
+          <p className="text-gray-500">Proteins</p>
         </div>
         <div className="bg-gray-100 rounded-xl p-2">
           <p className="font-medium">{entry.nutritionFacts.fat.toFixed(1)}g</p>
@@ -33,10 +33,30 @@ function EntryCard({ entry }: { entry: ProductEntry }) {
 }
 
 export function InformationWindow({ first, second }: Props) {
+
+  function sanitizeEntry(entry: ProductEntry): ProductEntry {
+    const n = (v: unknown) => (typeof v === "number" && isFinite(v) ? v : 0);
+    const facts = (f: NutritionFacts) => ({
+      calories: n(f?.calories),
+      carbohydrates: n(f?.carbohydrates),
+      fat: n(f?.fat),
+      proteins: n(f?.proteins),
+    });
+    return {
+      ...entry,
+      quantity: n(entry.quantity),
+      nutritionFacts: facts(entry.nutritionFacts),
+      product: {
+        ...entry.product,
+        nutritionFacts: facts(entry.product?.nutritionFacts),
+      },
+    };
+  }
+  
   return (
     <div className="flex gap-4">
-      <EntryCard entry={first} />
-      <EntryCard entry={second} />
+      <EntryCard entry={sanitizeEntry(first)} />
+      <EntryCard entry={sanitizeEntry(second)} />
     </div>
   );
 }
