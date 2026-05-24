@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { NutritionFacts, ProductEntry } from "../types/product";
-import { api } from "../api/api";
+import { EntryService } from "../api/entryService";
 
 export function EntryRow
 ({ entry, onSaved }: { entry: ProductEntry, onSaved?: () => void }) {
@@ -8,17 +8,13 @@ export function EntryRow
     const [quantity, setQuantity] = useState(String(entry.quantity));
 
     async function handleSave() {
-        await api(`/update?entryId=${encodeURIComponent(entry.id)}&quantity=${encodeURIComponent(quantity)}`, {
-            method: "POST",
-        });
+        await EntryService.updateApi(entry.id, Number(quantity));
         setEditing(false);
         onSaved?.();
     }
 
     async function handleDelete() {
-        await api(`/delete?entryId=${encodeURIComponent(entry.id)}`, {
-            method: "DELETE",
-        });
+        await EntryService.deleteApi(entry.id);
         onSaved?.();
     }
 

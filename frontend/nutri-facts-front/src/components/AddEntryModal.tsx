@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api } from "../api/api";
+import { EntryService } from "../api/entryService";
 
 type Props = {
   open: boolean;
@@ -16,9 +16,7 @@ export default function AddEntryModal({
   const [quantity, setQuantity] = useState("");
 
   async function handleSave() {
-    await api(`/set?code=${encodeURIComponent(code)}&quantity=${encodeURIComponent(quantity)}`, {
-      method: "POST",
-    });
+    await EntryService.setApi(code, Number(quantity));
     onSaved?.();
     onClose();
   }
