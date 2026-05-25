@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5294";
+const API_URL = "https://192.168.1.16:7270";
 
 export async function api(
   endpoint: string,

@@ -21,7 +21,12 @@ export const ProductService =
         CACHE.setOrUpdate(barcode, product);
         console.log(`Product with barcode ${barcode} fetched from API and stored in cache.`, product);
         return product;
-    }
+    },
 
+    async searchText(name: string)
+    {
+        
+
+    }
 
 }

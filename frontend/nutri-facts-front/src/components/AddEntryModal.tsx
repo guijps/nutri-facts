@@ -37,7 +37,7 @@ export default function AddEntryModal({
             X
           </button>
         </div>
-
+        {/* Aqui Tenho que criar o search component */}
         <input
           placeholder="Product name"
           value={code}

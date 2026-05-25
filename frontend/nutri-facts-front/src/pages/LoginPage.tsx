@@ -1,7 +1,8 @@
+import { useState } from "react";
+import BarcodeScanner from "../components/CodeScanner";
 import { LoginForm } from "../components/LoginForm";
 
 export default function LoginPage() {
-  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
@@ -16,6 +17,7 @@ export default function LoginPage() {
         </div>
 
         <LoginForm />
+
       </div>
     </div>
   );

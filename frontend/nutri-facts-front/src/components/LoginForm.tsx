@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/api";
 export function LoginForm() {
   const navigate = useNavigate();
 
@@ -13,17 +14,13 @@ export function LoginForm() {
     const password = formData.get("password");
 
     try {
-      const response = await fetch(
-        "http://localhost:5294/api/auth/login",
-        {
-          method: "POST",
-
-          headers: {
-            "email": email as string,
-            "password": password as string,
-          },
-        }
-      );
+      const response = await api("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "email": email as string,
+          "password": password as string,
+        },
+      });
 
       if (!response.ok) {
         alert("Invalid credentials");

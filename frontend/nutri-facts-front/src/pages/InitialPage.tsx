@@ -2,6 +2,7 @@ import {  useState } from "react";
 import AddEntryModal from "../components/AddEntryModal";
 import { EntryTable } from "../components/EntryTable";
 import { GoalTable } from "../components/GoalTable";
+import BarcodeScanner from "../components/CodeScanner";
 
 
 
@@ -9,7 +10,10 @@ export function InitialPage() {
     const [open, setOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
+ function handleScan(barcode: string) {
+    console.log(barcode);
 
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -29,6 +33,10 @@ export function InitialPage() {
         onClose={() => setOpen(false)}
         onSaved={() => setRefreshKey((k) => k + 1)}
       />
+      <BarcodeScanner
+        onScan={handleScan}
+      />
     </div>
+    
   );
 }
