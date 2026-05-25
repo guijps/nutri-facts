@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-public class OpenFoodReponse
+public class OpenFoodBarcodeResponse
 {
     [JsonPropertyName("code")]
     public string Id { get; set; }

@@ -24,7 +24,16 @@ public class BarcodeService
         }
         return null;
     }
+    public async Task<List<IProduct>?> GetProductByTextAsync(string text)
+    {
 
+        var searchedProduct = await _searchEngine.SearchByTextAsync(text);
+        if (searchedProduct != null && searchedProduct.Count > 0)
+        {
+            return searchedProduct;
+        }
+        return null;
+    }
     public void AddProduct(IProduct product)
     {
         _repository.AddProduct(product);

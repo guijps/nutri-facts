@@ -27,10 +27,11 @@ builder.Services.AddSwaggerGen(options =>
         [new OpenApiSecuritySchemeReference("Bearer", document)] = []
     });
 });
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("Default"));
+    var connectionString = builder.Configuration.GetConnectionString("Default");
+    options.UseNpgsql(connectionString);
 });
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<OpenFoodParser>();
@@ -55,6 +56,7 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
+        var key = builder.Configuration["Jwt:Key"];
         options.TokenValidationParameters =
             new TokenValidationParameters
             {
@@ -65,8 +67,7 @@ builder.Services
 
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            builder.Configuration["Jwt:Key"]!))
+                        Encoding.UTF8.GetBytes(key!))
             };
     });
     
@@ -75,7 +76,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!;
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
