@@ -16,11 +16,47 @@ public class BarcodeController : ControllerBase
     [HttpGet("{barcode}")]
     public async Task<IActionResult> GetByBarcode(string barcode)
     {
-        var product = await _barcodeApplicationService.GetProductByBarcodeAsync(barcode);
-        if (product == null)
+        try
         {
-            return NotFound();
+            var product = await _barcodeApplicationService.GetProductByBarcodeAsync(barcode);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }   
+        catch (HttpRequestException ex)
+        {
+            return StatusCode(502, new { message = ex.Message });
         }
-        return Ok(product);
+        catch (Exception ex)
+        {
+            // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+            Console.WriteLine($"Error in Search: {ex.Message}");
+            return StatusCode(500, "An error occurred while searching for products."); // Return a 500 Internal Server Error
+        }
     }
+
+    [HttpGet("/search")]
+    public async Task<IActionResult> Search(string query)
+    {
+        try
+        {
+            var products = await _barcodeApplicationService.GetProductByTextAsync(query);
+            return Ok(products);
+        }
+        catch (HttpRequestException ex)
+        {
+            return StatusCode(502, new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+            Console.WriteLine($"Error in Search: {ex.Message}");
+            return StatusCode(500, "An error occurred while searching for products."); // Return a 500 Internal Server Error
+        }
+    }
+    
+
+
 }

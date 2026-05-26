@@ -4,6 +4,7 @@ public class OpenFoodSearchEngine
 {
     private readonly HttpClient _httpClient;
     private readonly OpenFoodParser _parser;
+    private const int pageSize = 10;
 
     public OpenFoodSearchEngine(HttpClient httpClient, OpenFoodParser parser)
     {
@@ -16,7 +17,7 @@ public class OpenFoodSearchEngine
         var response = await _httpClient.GetAsync($"{Parameters.OpenFoodBarcodeApiUrl}{barcode}.json");
         if (!response.IsSuccessStatusCode)
         {
-            return null;
+            throw new HttpRequestException($"Failed to fetch product data for barcode {barcode}. Status code: {response.StatusCode}, Reason: {response.ReasonPhrase}");
         }
 
         var content = await response.Content.ReadAsStringAsync();
@@ -37,14 +38,14 @@ public class OpenFoodSearchEngine
         // page_size=10
         // */
         var searchTerms = text.Replace(" ", "+");
-        var defaultParams = "search_simple=1&action=process&json=1&page_size=3";
+        var defaultParams = $"search_simple=1&action=process&json=1&page_size={pageSize}";
         string path = $"{Parameters.OpenFoodSearchUrl}";
-        path += $"search.pl?search_terms={searchTerms}&{defaultParams}";
+        path += $"search_terms={searchTerms}&{defaultParams}";
         var response = 
         await _httpClient.GetAsync(path);
         if (!response.IsSuccessStatusCode)
         {
-            return null;
+            throw new HttpRequestException($"Failed to fetch product data for text '{text}'. Status code: {response.StatusCode}, Reason: {response.ReasonPhrase}");
         }
 
         var content = await response.Content.ReadAsStringAsync();
