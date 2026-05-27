@@ -1,6 +1,7 @@
 import {  useEffect, useState } from "react";
 import type { NutritionFacts, ProductEntry } from "../types/product";
 import { EntryRow } from "./EntryRow";
+import { EntryService } from "../api/entryService";
 
 
 function sanitizeEntry(entry: ProductEntry): ProductEntry {
@@ -26,13 +27,7 @@ export function EntryTable({ refreshKey, onSaved }: { refreshKey?: number; onSav
       const [entries, setEntries] = useState<ProductEntry[]>([]);
       const [error, setError] = useState<string | null>(null);
       useEffect(() => {
-        const token = localStorage.getItem("token");
-    
-        fetch("http://localhost:5294/all", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        EntryService.getAll()
           .then((res) => {
             if (!res.ok) throw new Error("Failed to fetch entries");
             return res.json();

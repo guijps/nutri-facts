@@ -10,6 +10,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import { AddEntryPage } from './pages/AddEntryPage'
 
 export default function App() {
   return (
@@ -23,6 +24,10 @@ export default function App() {
         <Route
           path="/home"
           element={<InitialPage />}
+        />
+        <Route
+          path="/add-entry"
+          element={<AddEntryPage />}
         />
       </Routes>
     </BrowserRouter>

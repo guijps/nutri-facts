@@ -8,10 +8,12 @@ export const EntryService =
         let request = await api(`/set?code=${encodeURIComponent(barcode)}&quantity=${encodeURIComponent(quantity)}`, {
             method: "POST",
         });
-        var response = await request.json();
-        return response;
+        return request;
     },
-
+    async getAll()
+    {
+        return await api("/all");
+    },
     async updateApi(entryId: string, quantity: number)
     {
         await api(`/update?entryId=${encodeURIComponent(entryId)}&quantity=${encodeURIComponent(quantity)}`, {

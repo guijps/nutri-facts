@@ -23,10 +23,16 @@ export const ProductService =
         return product;
     },
 
-    async searchText(name: string)
+    async searchText(query: string)
     {
-        
+        const response = await api(`/search?query=${encodeURIComponent(query)}`);
 
+        if (!response.ok) 
+        {
+            throw new Error(`Failed to search products with query ${query}`);
+        }
+
+        return response;
     }
 
 }

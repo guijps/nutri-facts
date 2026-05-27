@@ -3,10 +3,12 @@ import AddEntryModal from "../components/AddEntryModal";
 import { EntryTable } from "../components/EntryTable";
 import { GoalTable } from "../components/GoalTable";
 import BarcodeScanner from "../components/CodeScanner";
+import { useNavigate } from "react-router-dom";
 
 
 
 export function InitialPage() {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
@@ -22,20 +24,11 @@ export function InitialPage() {
       <EntryTable refreshKey={refreshKey} onSaved={() => setRefreshKey((k) => k + 1)}/>
       
         <button
-        onClick={() => setOpen(true)}
+        onClick={() => {navigate("/add-entry")}}
         className="bg-black text-white px-5 py-3 rounded-2xl"
       >
         Add Entry
       </button>
-
-      <AddEntryModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onSaved={() => setRefreshKey((k) => k + 1)}
-      />
-      <BarcodeScanner
-        onScan={handleScan}
-      />
     </div>
     
   );

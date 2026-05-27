@@ -44,6 +44,13 @@ export default function AddEntryModal({
           onChange={(e) => setCode(e.target.value)}
           className="w-full border rounded-2xl p-3 mb-4"
         />
+
+            <input
+          placeholder="Product name"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          className="w-full border rounded-2xl p-3 mb-4"
+        />
         
         <input
           placeholder="Quantity"
@@ -53,6 +60,9 @@ export default function AddEntryModal({
         />
         <button onClick={handleSave} className="w-full bg-black text-white rounded-2xl p-3">
           Save
+        </button>
+         <button onClick={handleSave} className="w-full bg-black text-white rounded-2xl p-3">
+          Search By Name
         </button>
       </div>
     </div>

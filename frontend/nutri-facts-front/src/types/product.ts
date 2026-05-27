@@ -7,6 +7,7 @@ export interface NutritionFacts {
 
 export interface Product {
   name: string;
+  id: string;
   nutritionFacts: NutritionFacts;
 }
 

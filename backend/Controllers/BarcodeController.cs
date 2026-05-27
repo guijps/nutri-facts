@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
 namespace NutriFacts.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class BarcodeController : ControllerBase
 {
