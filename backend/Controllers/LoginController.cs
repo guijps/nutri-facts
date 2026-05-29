@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using NutriFacts.Auth;
 namespace NutriFacts.Controllers;
 
 [Route("api/auth")]

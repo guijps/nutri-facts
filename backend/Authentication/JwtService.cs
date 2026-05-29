@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
+namespace NutriFacts.Auth;
 public class JwtService
 {
     public string GenerateToken(AppUser user)

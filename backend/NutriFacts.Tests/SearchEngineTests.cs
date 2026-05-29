@@ -2,12 +2,12 @@ using Xunit;
 
 public class SearchEngineTests
 {
-        OpenFoodSearchEngine _searchEngine;
+        OpenFoodSearchEngineService _searchEngine;
     public SearchEngineTests()
     {
         HttpClient httpClient = new HttpClient();
         OpenFoodParser parser = new OpenFoodParser();
-        _searchEngine = new OpenFoodSearchEngine(httpClient, parser);
+        _searchEngine = new OpenFoodSearchEngineService(httpClient, parser);
     
     }
 

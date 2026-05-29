@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using NutriFacts.Auth;
+using NutriFacts.Service;
+using NutriFacts.Service.Parser.OpenFood;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,25 +31,31 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddScoped<HttpClient>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Default");
     options.UseNpgsql(connectionString);
 });
-builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<OpenFoodParser>();
-builder.Services.AddScoped<OpenFoodSearchEngine>();
-builder.Services.AddSingleton<BarcodeRepository>();
 builder.Services.AddSingleton<JwtService>();
-builder.Services.AddScoped<BarcodeService>();
-builder.Services.AddScoped<BarcodeApplicationService>();
-builder.Services.AddSingleton<EntryRepository>();
-builder.Services.AddScoped<EntryService>();
-builder.Services.AddScoped<EntryApplicationService>();
 builder.Services
     .AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+// repositories 
+builder.Services.AddSingleton<ProductRepository>();
+builder.Services.AddSingleton<EntryRepository>();
+
+//Services + Dependencies
+builder.Services.AddScoped<OpenFoodParser>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<EntryService>();
+
+//Application Services (pre-Controllers)
+builder.Services.AddScoped<OpenFoodSearchEngineService>();
+builder.Services.AddScoped<ProductApplicationService>();
+builder.Services.AddScoped<EntryApplicationService>();
 
 builder.Services
     .AddAuthentication(options =>

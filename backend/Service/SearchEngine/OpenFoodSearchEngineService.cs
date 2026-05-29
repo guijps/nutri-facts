@@ -1,12 +1,12 @@
 using System.Text.Json;
-
-public class OpenFoodSearchEngine
+using NutriFacts.Service.Parser.OpenFood;
+public class OpenFoodSearchEngineService
 {
     private readonly HttpClient _httpClient;
     private readonly OpenFoodParser _parser;
     private const int pageSize = 10;
 
-    public OpenFoodSearchEngine(HttpClient httpClient, OpenFoodParser parser)
+    public OpenFoodSearchEngineService(HttpClient httpClient, OpenFoodParser parser)
     {
         _httpClient = httpClient;
         _parser = parser;

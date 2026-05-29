@@ -1,9 +1,11 @@
-public class BarcodeService
-{
-    private readonly BarcodeRepository _repository;
-    private readonly OpenFoodSearchEngine _searchEngine;
 
-    public BarcodeService(BarcodeRepository repository,OpenFoodSearchEngine searchEngine)
+namespace NutriFacts.Service;
+public class ProductService
+{
+    private readonly ProductRepository _repository;
+    private readonly OpenFoodSearchEngineService _searchEngine;
+
+    public ProductService(ProductRepository repository,OpenFoodSearchEngineService searchEngine)
     {
         _repository = repository;
         _searchEngine = searchEngine;

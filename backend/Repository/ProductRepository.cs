@@ -1,4 +1,4 @@
-public class BarcodeRepository
+public class ProductRepository
 {
     public Dictionary<string,IProduct> _products = new Dictionary<string, IProduct>
     {

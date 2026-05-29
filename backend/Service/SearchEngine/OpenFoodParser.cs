@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore.Internal;
 
+namespace NutriFacts.Service.Parser.OpenFood;  
 public class OpenFoodParser
 {
     

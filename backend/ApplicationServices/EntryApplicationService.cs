@@ -1,12 +1,13 @@
+using NutriFacts.Service;
 public class EntryApplicationService
 {
     private readonly EntryService _service;
-    private readonly BarcodeService _barcodeService;
+    private readonly ProductService _ProductService;
 
-    public EntryApplicationService(EntryService service, BarcodeService barcodeService)
+    public EntryApplicationService(EntryService service, ProductService ProductService)
     {
         _service = service;
-        _barcodeService = barcodeService;
+        _ProductService = ProductService;
     }
 
     public List<IProductEntry> GetAll()
@@ -19,7 +20,7 @@ public class EntryApplicationService
     }
     public async Task AddAsync(string entryId, double quantity)
     {
-        var product = await _barcodeService.GetProductByBarcodeAsync(entryId);
+        var product = await _ProductService.GetProductByBarcodeAsync(entryId);
         if (product != null)
         {
             var entry = new ProductEntry(product, quantity);

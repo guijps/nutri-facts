@@ -1,3 +1,4 @@
+namespace NutriFacts.Service;
 public class EntryService
 {
     private readonly EntryRepository _entryRepository;

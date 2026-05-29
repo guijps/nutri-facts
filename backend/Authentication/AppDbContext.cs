@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+namespace NutriFacts.Auth;
 public class AppDbContext
     : IdentityDbContext<AppUser>
 {

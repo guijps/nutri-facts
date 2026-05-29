@@ -1,8 +1,9 @@
-public class BarcodeApplicationService
+using NutriFacts.Service;
+public class ProductApplicationService
 {
-    private readonly BarcodeService _service;
+    private readonly ProductService _service;
 
-    public BarcodeApplicationService(BarcodeService service)
+    public ProductApplicationService(ProductService service)
     {
         _service = service;
     }

@@ -5,13 +5,13 @@ namespace NutriFacts.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class BarcodeController : ControllerBase
+public class ProductController : ControllerBase
 {
-    private readonly BarcodeApplicationService _barcodeApplicationService;
+    private readonly ProductApplicationService _ProductApplicationService;
 
-    public BarcodeController(BarcodeApplicationService barcodeApplicationService)
+    public ProductController(ProductApplicationService ProductApplicationService)
     {
-        _barcodeApplicationService = barcodeApplicationService;
+        _ProductApplicationService = ProductApplicationService;
     }
 
     [HttpGet("{barcode}")]
@@ -19,7 +19,7 @@ public class BarcodeController : ControllerBase
     {
         try
         {
-            var product = await _barcodeApplicationService.GetProductByBarcodeAsync(barcode);
+            var product = await _ProductApplicationService.GetProductByBarcodeAsync(barcode);
             if (product == null)
             {
                 return NotFound();
@@ -43,7 +43,7 @@ public class BarcodeController : ControllerBase
     {
         try
         {
-            var products = await _barcodeApplicationService.GetProductByTextAsync(query);
+            var products = await _ProductApplicationService.GetProductByTextAsync(query);
             return Ok(products);
         }
         catch (HttpRequestException ex)
