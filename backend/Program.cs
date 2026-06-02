@@ -44,8 +44,8 @@ builder.Services
     .AddDefaultTokenProviders();
 
 // repositories 
-builder.Services.AddSingleton<ProductRepository>();
-builder.Services.AddSingleton<EntryRepository>();
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<EntryRepository>();
 
 //Services + Dependencies
 builder.Services.AddScoped<OpenFoodParser>();

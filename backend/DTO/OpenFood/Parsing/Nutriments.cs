@@ -13,5 +13,5 @@ public class Nutriments
     [JsonPropertyName("sugars_100g")]
     public double Sugar { get; set; }
     [JsonPropertyName("image_front_small_url")]
-    public string Image { get; set; }
+    public string? Image { get; set; }
 }

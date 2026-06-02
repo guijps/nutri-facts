@@ -7,25 +7,26 @@ public class EntryService
     {
         _entryRepository = entryRepository;
     }
-    public List<IProductEntry> GetAll()
+    public List<IProductEntry> GetAll(string userId)
     {
-        return _entryRepository.GetAll();
+        return _entryRepository.GetAll(userId);
     }
 
     public void Add(IProductEntry entry)
     {
         _entryRepository.Add(entry);
     }
-    public void Delete(Guid entryId)
+    public void Delete(Guid entryId, string userId)
     {
-        _entryRepository.Delete(entryId);
+        _entryRepository.Delete(entryId, userId);
     }
-    public void Update(string id,double quantity)
+    public void Update(string id, string userId, double quantity)
     {
-        var entry = _entryRepository.GetById(Guid.Parse(id));
-        if (entry != null)
-        {
-            entry.Quantity = quantity;
-        }
+        _entryRepository.Update(Guid.Parse(id), userId, quantity);
+    }
+
+    public List<IProductEntry> GetHistory(string userId)
+    {
+        return _entryRepository.GetHistory(userId);
     }
 }

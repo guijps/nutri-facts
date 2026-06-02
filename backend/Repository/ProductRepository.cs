@@ -1,28 +1,107 @@
+using Microsoft.EntityFrameworkCore;
+
 public class ProductRepository
 {
-    public Dictionary<string,IProduct> _products = new Dictionary<string, IProduct>
-    {
-        { "123456789012", new Product { Id = "123456789012", Name = "Apple", NutritionFacts = new NutritionFacts { Calories = 95, Carbohydrates = 25, Proteins = 0.5, Fat = 0.3 } } },
-        { "987654321098", new Product { Id = "987654321098", Name = "Banana", NutritionFacts = new NutritionFacts { Calories = 105, Carbohydrates = 27, Proteins = 1.3, Fat = 0.4 } } },
-        { "555555555555", new Product { Id = "555555555555", Name = "Orange Juice", NutritionFacts = new NutritionFacts { Calories = 110, Carbohydrates = 26, Proteins = 2, Fat = 0.5 } } }
-    };
+    private readonly AppDbContext _db;
+    private readonly OpenFoodSearchEngineService _searchEngine;
+    private readonly ILogger<ProductRepository> _logger;
 
-    public IProduct? GetByBarcode(string barcode)
+    public ProductRepository(ILogger<ProductRepository> logger, AppDbContext db, OpenFoodSearchEngineService searchEngine)
     {
-        // Simulate fetching data from a database or external API
-        if (_products.ContainsKey(barcode))
-        {
-            return _products[barcode];
-        }
-        
-        return null;
+        _logger = logger;
+        _searchEngine = searchEngine;
+        _db = db;
     }
 
+    /// <summary>
+    /// Retrieves a product by its barcode. If the product is not found in the database, it will be searched using the OpenFoodSearchEngineService and added to the database if found.
+    /// </summary>
+    /// <param name="barcode">The barcode of the product to retrieve.</param>
+    /// <returns>The product if found; otherwise, null.</returns>
+    public async Task<IProduct?> GetByBarcodeAsync(string barcode)
+    {
+        var existingProduct = await _db.Products.FirstOrDefaultAsync(product => product.Id == barcode);
+        if (existingProduct != null)
+        {
+            _logger.LogDebug("Product with barcode {Barcode} found in the database.", barcode);
+            return existingProduct;
+        }
+
+        var searchedProduct = await _searchEngine.SearchByBarcodeAsync(barcode);
+        if (searchedProduct == null || searchedProduct is not Product)
+        {
+            return null;
+        }
+
+        _db.Products.Add((Product)searchedProduct);
+        _logger.LogDebug("Product with barcode {Barcode} added to the database.", barcode);
+        await _db.SaveChangesAsync();
+
+        return searchedProduct;
+    }
+
+    /// <summary>
+    /// Retrieves products by a text search. If the products are not found in the database, they will be searched using the OpenFoodSearchEngineService.
+    /// </summary>
+    /// <param name="text">The text to search for.</param>
+    /// <returns>A list of products if found; otherwise, null.</returns>
+    public async Task<List<IProduct>?> GetByTextAsync(string text)
+    {
+        var cachedProducts = await _db.Products
+            .Where(product => product.Name.Contains(text))
+            .ToListAsync();
+
+        if (cachedProducts.Count > 0)
+        {
+            return cachedProducts.Cast<IProduct>().ToList();
+        }
+
+        var searchedProduct = await _searchEngine.SearchByTextAsync(text);
+        if (searchedProduct == null || searchedProduct.Count == 0)
+        {
+            return null;
+        }
+        return searchedProduct;
+    }
+
+    /// <summary>
+    /// Adds a new product to the database if it does not already exist.
+    /// </summary>
+    /// <param name="product">The product to add.</param>
     public void AddProduct(IProduct product)
     {
-        if (!_products.ContainsKey(product.Id))
+        var persistentProduct = product as Product ?? throw new ArgumentException("ProductRepository requires Product entities.", nameof(product));
+
+        if (!_db.Products.Any(existingProduct => existingProduct.Id == persistentProduct.Id))
         {
-            _products.Add(product.Id, product);
+            _db.Products.Add(persistentProduct);
+            _db.SaveChanges();
+        }
+    }
+
+    /// <summary>
+    /// Updates an existing product in the database.
+    /// </summary>
+    /// <param name="product">The product to update.</param>
+    public void UpdateProduct(IProduct product)
+    {
+        var persistentProduct = product as Product ?? throw new ArgumentException("ProductRepository requires Product entities.", nameof(product));
+
+        _db.Products.Update(persistentProduct);
+        _db.SaveChanges();
+    }
+
+    /// <summary>
+    /// Deletes a product from the database by its barcode.
+    /// </summary>
+    /// <param name="barcode">The barcode of the product to delete.</param>
+    public void DeleteProduct(string barcode)
+    {
+        var product = _db.Products.FirstOrDefault(existingProduct => existingProduct.Id == barcode);
+        if (product != null)
+        {
+            _db.Products.Remove(product);
+            _db.SaveChanges();
         }
     }
 }

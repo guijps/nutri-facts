@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 
-public class OpenFoodBarcodeResponse
+public class OpenFoodSearchItem
 {
     [JsonPropertyName("code")]
     public string Id { get; set; }
-    
+
     [JsonPropertyName("product")]
-    public ProductData? Product { get; set; }
-    
+    public ProductData Product { get; set; }
+
 }

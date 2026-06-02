@@ -1,3 +1,4 @@
+using NutriFacts.Service.Parser.OpenFood;
 using Xunit;
 
 public class SearchEngineTests

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace NutriFacts.Controllers;
 [Authorize]
@@ -14,16 +15,34 @@ public class EntryController : ControllerBase
         _entryApplicationService = entryApplicationService;
     }
 
+    private string? GetUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+
     [HttpPost("/update")]
     public IActionResult Update(string entryId, double quantity)
     {
-        _entryApplicationService.Update(entryId, quantity);
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        _entryApplicationService.Update(entryId, userId, quantity);
         return Ok();
     }
+
     [HttpDelete("/delete")]
     public IActionResult Delete(string entryId)
     {
-        _entryApplicationService.Delete(entryId);
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        _entryApplicationService.Delete(entryId, userId);
         return Ok();
     }
 
@@ -31,20 +50,52 @@ public class EntryController : ControllerBase
     [HttpPost("/set")]
     public async Task<IActionResult> Set(string code, double quantity)
     {
-        await _entryApplicationService.AddAsync(code, quantity);
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        await _entryApplicationService.AddAsync(code, userId, quantity);
         return Ok();
     }
+
+    [HttpGet("/history")]
+    public IActionResult GetHistory()
+    {
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        var history = _entryApplicationService.GetHistory(userId);
+        return Ok(history);
+    }
+
     [HttpGet("/all")]
     public IActionResult GetAll()
     {
-        var entries = _entryApplicationService.GetAll();
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        var entries = _entryApplicationService.GetAll(userId);
         return Ok(entries);
     }
 
     [HttpGet("/all-facts")]
     public IActionResult GetTodayFacts()
     {
-        var facts = _entryApplicationService.GetTodayFacts();
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        var facts = _entryApplicationService.GetTodayFacts(userId);
         return Ok(facts);
     }
 

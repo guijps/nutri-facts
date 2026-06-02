@@ -8,8 +8,7 @@ public class UserRepository
             UserName = "testuser",
             Email = "testuser@example.com",
             PasswordHash = "passwordhash"
-        }
-    };
+        }};
 
     public AppUser? GetByEmail(string email)
     {

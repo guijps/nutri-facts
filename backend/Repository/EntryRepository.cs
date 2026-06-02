@@ -1,27 +1,67 @@
+using Microsoft.EntityFrameworkCore;
+
 public class EntryRepository
 {
-    private readonly List<IProductEntry> _entries = new List<IProductEntry>();
+    private readonly AppDbContext _db;
 
-    public IProductEntry? GetById(Guid id)
+    public EntryRepository(AppDbContext db)
     {
-        return _entries.FirstOrDefault(e => e.Id == id);
+        _db = db;
+    }
+
+    public IProductEntry? GetById(Guid id, string userId)
+    {
+        return _db.ProductEntries
+            .Include(entry => entry.Product)
+            .FirstOrDefault(entry => entry.Id == id && entry.UserId == userId);
+    }
+    public List<IProductEntry> GetHistory(string userId)
+    {
+        return _db.ProductEntries
+            .AsNoTracking()
+            .Include(entry => entry.Product)
+            .Where(entry => entry.UserId == userId)
+            .Cast<IProductEntry>()
+            .ToList();
     }
 
     public void Add(IProductEntry entry)
     {
-        _entries.Add(entry);
+        var productEntry = entry as ProductEntry ?? throw new ArgumentException("EntryRepository requires ProductEntry entities.", nameof(entry));
+
+        _db.ProductEntries.Add(productEntry);
+        _db.SaveChanges();
     }
 
-    public void Delete(Guid entryId)
+    public void Delete(Guid entryId, string userId)
     {
-        var entry = GetById(entryId);
+        var entry = _db.ProductEntries.FirstOrDefault(productEntry => productEntry.Id == entryId && productEntry.UserId == userId);
         if (entry != null)
         {
-            _entries.Remove(entry);
+            _db.ProductEntries.Remove(entry);
+            _db.SaveChanges();
         }
     }
-    public List<IProductEntry> GetAll()
+
+    public void Update(Guid entryId, string userId, double quantity)
     {
-        return _entries;
+        var entry = _db.ProductEntries.FirstOrDefault(productEntry => productEntry.Id == entryId && productEntry.UserId == userId);
+        if (entry == null)
+        {
+            return;
+        }
+
+        entry.Quantity = quantity;
+        _db.SaveChanges();
+    }
+
+    public List<IProductEntry> GetAll(string userId)
+    {
+        return _db.ProductEntries
+            .AsNoTracking()
+            .Include(entry => entry.Product)
+            .Where(entry => entry.UserId == userId)
+            .Cast<IProductEntry>()
+            .ToList();
     }
 }
