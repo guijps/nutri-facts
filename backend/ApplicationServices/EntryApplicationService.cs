@@ -58,8 +58,8 @@ public class EntryApplicationService
         };
     }
 
-    public List<IProductEntry> GetHistory(string userId)
+    public List<IProduct> GetHistory(string userId)
     {
-        return _service.GetHistory(userId);
+        return _service.GetHistory(userId).Select(e => e.Product).ToList();
     }
 }

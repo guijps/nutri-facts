@@ -12,8 +12,13 @@ export function ProductSelection({ onProductSelected }: ProductSelectionProps)
   const [selectionMode, setSelectionMode] = useState<"text" | "barcode">("text");
 
   async function handleBarcodeScanned(barcode: string) {
-    const product = await ProductService.getByBarcode(barcode);
-    onProductSelected(product);
+    try {
+      const product = await ProductService.getByBarcode(barcode);
+      onProductSelected(product);
+    } catch (error) {
+      alert("Failed to fetch product by barcode");
+      console.error("Failed to fetch product by barcode", error);
+    }
   }
 
     return (

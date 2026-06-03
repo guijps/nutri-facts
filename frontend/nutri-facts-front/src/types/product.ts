@@ -17,3 +17,7 @@ export interface ProductEntry {
   quantity: number;
   nutritionFacts: NutritionFacts;
 }
+export const format = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 1,
+});

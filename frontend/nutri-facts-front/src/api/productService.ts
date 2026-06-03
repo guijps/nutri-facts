@@ -10,7 +10,7 @@ export const ProductService =
             return CACHE.get(barcode);
         }
         
-        const response = await api(`/products/${barcode}`);
+        const response = await api(`/api/product/${barcode}`);
 
         if (!response.ok) 
         {
@@ -32,7 +32,16 @@ export const ProductService =
             throw new Error(`Failed to search products with query ${query}`);
         }
 
-        return response;
+        return response.json();
+    },
+    async getHistory()
+    {
+        const response = await api(`/history`);
+        if (!response.ok)        {
+            throw new Error(`Failed to fetch search history`);
+        }
+        const history = await response.json();
+        return history;
     }
 
 }

@@ -1,11 +1,12 @@
 import React from 'react';
-import type { Product } from '../types/product';
+import { format, type Product } from '../types/product';
 
 
 interface ProductListProps {
   products: Product[];
   onProductClick: (product: Product) => void;
 }
+
 
 const ProductList: React.FC<ProductListProps> = ({ products, onProductClick }) => {
   return (
@@ -19,19 +20,19 @@ const ProductList: React.FC<ProductListProps> = ({ products, onProductClick }) =
           {product.name}
           <div className="grid grid-cols-4 gap-2 text-sm text-center">
               <div className="bg-gray-100 rounded-xl p-2">
-                <p className="font-medium">{product.nutritionFacts.calories.toFixed(1)}</p>
+                <p className="font-medium">{format.format(product.nutritionFacts.calories)}</p>
                 <p className="text-gray-500">kcal</p>
               </div>
               <div className="bg-gray-100 rounded-xl p-2">
-                <p className="font-medium">{product.nutritionFacts.carbohydrates.toFixed(1)}g</p>
+                <p className="font-medium">{format.format(product.nutritionFacts.carbohydrates)}g</p>
                 <p className="text-gray-500">Carbs</p>
               </div>
               <div className="bg-gray-100 rounded-xl p-2">
-                <p className="font-medium">{product.nutritionFacts.proteins.toFixed(1)}g</p>
+                <p className="font-medium">{format.format(product.nutritionFacts.proteins)}g</p>
                 <p className="text-gray-500">Protein</p>
               </div>
               <div className="bg-gray-100 rounded-xl p-2">
-                <p className="font-medium">{product.nutritionFacts.fat.toFixed(1)}g</p>
+                <p className="font-medium">{format.format(product.nutritionFacts.fat)}g</p>
                 <p className="text-gray-500">Fat</p>
               </div>
             </div>
