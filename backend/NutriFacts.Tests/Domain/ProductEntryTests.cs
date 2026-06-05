@@ -42,5 +42,22 @@ public class ProductEntryTests
         Assert.Equal(30, entry.NutritionFacts.Fat);
         Assert.Equal(15, entry.NutritionFacts.Proteins);
         Assert.Equal(600, entry.NutritionFacts.Calories);
+        entry.Quantity = 0.5;
+        Assert.Equal(10, entry.NutritionFacts.Carbohydrates);
+        Assert.Equal(5, entry.NutritionFacts.Fat);
+        Assert.Equal(2.5, entry.NutritionFacts.Proteins);
+        Assert.Equal(100, entry.NutritionFacts.Calories);
+    }
+    
+    [Fact]
+    public void ProductEntry_NullFacts_RecalculatesNutritionFacts()
+    {
+        var product = new Product{};
+        var entry = new ProductEntry(product, quantity: 1);
+
+        Assert.Equal(0, entry.NutritionFacts.Carbohydrates);
+        Assert.Equal(0, entry.NutritionFacts.Fat);
+        Assert.Equal(0, entry.NutritionFacts.Proteins);
+        Assert.Equal(0, entry.NutritionFacts.Calories);
     }
 }

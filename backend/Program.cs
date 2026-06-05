@@ -49,8 +49,6 @@ builder.Services.AddScoped<EntryRepository>();
 
 //Services + Dependencies
 builder.Services.AddScoped<OpenFoodParser>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<EntryService>();
 
 //Application Services (pre-Controllers)
 builder.Services.AddScoped<OpenFoodSearchEngineService>();

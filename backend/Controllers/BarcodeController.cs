@@ -57,7 +57,4 @@ public class ProductController : ControllerBase
             return StatusCode(500, "An error occurred while searching for products."); // Return a 500 Internal Server Error
         }
     }
-    
-
-
 }

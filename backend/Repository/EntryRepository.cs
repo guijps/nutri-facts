@@ -9,59 +9,61 @@ public class EntryRepository
         _db = db;
     }
 
-    public IProductEntry? GetById(Guid id, string userId)
+    public async Task<IProductEntry?> GetByIdAsync(Guid id, string userId)
     {
-        return _db.ProductEntries
+        return await _db.ProductEntries
             .Include(entry => entry.Product)
-            .FirstOrDefault(entry => entry.Id == id && entry.UserId == userId);
+            .FirstOrDefaultAsync(entry => entry.Id == id && entry.UserId == userId);
     }
-    public List<IProductEntry> GetHistory(string userId)
+    public async Task<List<IProductEntry>> GetHistoryAsync(string userId)
     {
-        return _db.ProductEntries
+        var entries = await _db.ProductEntries
             .AsNoTracking()
             .Include(entry => entry.Product)
             .Where(entry => entry.UserId == userId)
-            .Cast<IProductEntry>()
-            .ToList();
+            .ToListAsync();
+
+        return entries.Cast<IProductEntry>().ToList();
     }
 
-    public void Add(IProductEntry entry)
+    public async Task AddAsync(IProductEntry entry)
     {
         var productEntry = entry as ProductEntry ?? throw new ArgumentException("EntryRepository requires ProductEntry entities.", nameof(entry));
 
-        _db.ProductEntries.Add(productEntry);
-        _db.SaveChanges();
+        await _db.ProductEntries.AddAsync(productEntry);
+        await _db.SaveChangesAsync();
     }
 
-    public void Delete(Guid entryId, string userId)
+    public async Task DeleteAsync(Guid entryId, string userId)
     {
-        var entry = _db.ProductEntries.FirstOrDefault(productEntry => productEntry.Id == entryId && productEntry.UserId == userId);
+        var entry = await _db.ProductEntries.FirstOrDefaultAsync(productEntry => productEntry.Id == entryId && productEntry.UserId == userId);
         if (entry != null)
         {
             _db.ProductEntries.Remove(entry);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 
-    public void Update(Guid entryId, string userId, double quantity)
+    public async Task UpdateAsync(Guid entryId, string userId, double quantity)
     {
-        var entry = _db.ProductEntries.FirstOrDefault(productEntry => productEntry.Id == entryId && productEntry.UserId == userId);
+        var entry = await _db.ProductEntries.FirstOrDefaultAsync(productEntry => productEntry.Id == entryId && productEntry.UserId == userId);
         if (entry == null)
         {
             return;
         }
 
         entry.Quantity = quantity;
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
     }
 
-    public List<IProductEntry> GetAll(string userId)
+    public async Task<List<IProductEntry>> GetAllAsync(string userId)
     {
-        return _db.ProductEntries
+        var entries = await _db.ProductEntries
             .AsNoTracking()
             .Include(entry => entry.Product)
             .Where(entry => entry.UserId == userId)
-            .Cast<IProductEntry>()
-            .ToList();
+            .ToListAsync();
+
+        return entries.Cast<IProductEntry>().ToList();
     }
 }

@@ -79,29 +79,4 @@ public class ProductRepository
         }
     }
 
-    /// <summary>
-    /// Updates an existing product in the database.
-    /// </summary>
-    /// <param name="product">The product to update.</param>
-    public void UpdateProduct(IProduct product)
-    {
-        var persistentProduct = product as Product ?? throw new ArgumentException("ProductRepository requires Product entities.", nameof(product));
-
-        _db.Products.Update(persistentProduct);
-        _db.SaveChanges();
-    }
-
-    /// <summary>
-    /// Deletes a product from the database by its barcode.
-    /// </summary>
-    /// <param name="barcode">The barcode of the product to delete.</param>
-    public void DeleteProduct(string barcode)
-    {
-        var product = _db.Products.FirstOrDefault(existingProduct => existingProduct.Id == barcode);
-        if (product != null)
-        {
-            _db.Products.Remove(product);
-            _db.SaveChanges();
-        }
-    }
 }
