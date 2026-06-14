@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NutriFacts.Auth;
+using NutriFacts.DTO.Auth;
 namespace NutriFacts.Controllers;
 
+
+[ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
@@ -40,10 +43,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(
-        [FromHeader(Name = "email")] string email,
-        [FromHeader(Name = "password")] string password)
+    public async Task<IActionResult> Login(LoginDto dto)
     {
+        var email = dto.Email;
+        var password = dto.Password;
         var user =
             await _userManager.FindByEmailAsync(email);
 

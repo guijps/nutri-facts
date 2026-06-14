@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NutriFacts.Domain.Exceptions;
 
 public class EntryRepository
 {
@@ -15,7 +16,7 @@ public class EntryRepository
             .Include(entry => entry.Product)
             .FirstOrDefaultAsync(entry => entry.Id == id && entry.UserId == userId);
     }
-    public async Task<List<IProductEntry>> GetHistoryAsync(string userId)
+    public async Task<IEnumerable<IProductEntry>> GetHistoryAsync(string userId)
     {
         var entries = await _db.ProductEntries
             .AsNoTracking()
@@ -23,12 +24,12 @@ public class EntryRepository
             .Where(entry => entry.UserId == userId)
             .ToListAsync();
 
-        return entries.Cast<IProductEntry>().ToList();
+        return entries.Cast<IProductEntry>();
     }
 
     public async Task AddAsync(IProductEntry entry)
     {
-        var productEntry = entry as ProductEntry ?? throw new ArgumentException("EntryRepository requires ProductEntry entities.", nameof(entry));
+        var productEntry = entry as ProductEntry ?? throw new InvalidEntryException();
 
         await _db.ProductEntries.AddAsync(productEntry);
         await _db.SaveChangesAsync();
@@ -56,7 +57,7 @@ public class EntryRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<List<IProductEntry>> GetAllAsync(string userId)
+    public async Task<IEnumerable<IProductEntry>> GetAllAsync(string userId)
     {
         var entries = await _db.ProductEntries
             .AsNoTracking()
@@ -64,6 +65,6 @@ public class EntryRepository
             .Where(entry => entry.UserId == userId)
             .ToListAsync();
 
-        return entries.Cast<IProductEntry>().ToList();
+        return entries.Cast<IProductEntry>();
     }
 }

@@ -4,5 +4,6 @@ public interface IProductEntry
     IProduct Product { get; set; }
     double Quantity { get; set; }
     INutritionFacts NutritionFacts { get; }
+    DateTime CreatedAt { get; set; }
 
 }

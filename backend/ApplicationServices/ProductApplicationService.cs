@@ -1,42 +1,40 @@
-using NutriFacts.Service;
+using NutriFacts.Domain.Exceptions;
 public class ProductApplicationService(
     ProductRepository repository, 
-    OpenFoodSearchEngineService searchEngine, 
     ILogger<ProductApplicationService> logger)
 {
     public async Task<IProduct?> GetProductByBarcodeAsync(string barcode)
     {
-        logger.LogDebug("Looking up product by barcode: {Barcode}", barcode);
+        logger.LogDebug("Looking up product by barcode: {0}", barcode);
 
         var product = await repository.GetByBarcodeAsync(barcode);
         if (product != null)
         {
-            logger.LogInformation("Product found in cache: {Barcode}", barcode);
+            logger.LogInformation("Product found in cache: {0}", barcode);
             return product;
         }
-
-        logger.LogWarning("Product not found for barcode: {Barcode}", barcode);
-        return null;
+        throw new ProductNotFoundException(barcode);
     }
     
-    public async Task<List<IProduct>?> GetProductByTextAsync(string text)
+    public async Task<IEnumerable<IProduct>?> GetProductByTextAsync(string text)
     {
-        logger.LogDebug("Searching products by text: {Text}", text);
+        logger.LogDebug("Searching products by text: {0}", text);
 
         var searchedProduct = await repository.GetByTextAsync(text);
-        if (searchedProduct != null && searchedProduct.Count > 0)
+        if (searchedProduct != null && searchedProduct.Any())
         {
-            logger.LogInformation("Text search returned {Count} result(s) for: {Text}", searchedProduct.Count, text);
+            logger.LogInformation("Text search returned {0} result(s) for: {1}", searchedProduct.Count(), text);
             return searchedProduct;
         }
 
-        logger.LogWarning("No products found for text: {Text}", text);
-        return null;
+        logger.LogWarning("No products found for text: {0}", text);
+        throw new ProductNotFoundException(text);
     }
 
     public void AddProduct(IProduct product)
     {
-        logger.LogInformation("Adding product: {Name} ({Id})", product.Name, product.Id);
+        
+        logger.LogInformation("Adding product: {0} ({1})", product.Name, product.Id);
         repository.AddProduct(product);
     }
 }

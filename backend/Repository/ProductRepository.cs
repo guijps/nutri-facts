@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NutriFacts.Domain.Exceptions;
 
 public class ProductRepository
 {
@@ -23,18 +24,18 @@ public class ProductRepository
         var existingProduct = await _db.Products.FirstOrDefaultAsync(product => product.Id == barcode);
         if (existingProduct != null)
         {
-            _logger.LogDebug("Product with barcode {Barcode} found in the database.", barcode);
+            _logger.LogDebug("Product with barcode {0} found in the database.", barcode);
             return existingProduct;
         }
 
         var searchedProduct = await _searchEngine.SearchByBarcodeAsync(barcode);
         if (searchedProduct == null || searchedProduct is not Product)
         {
-            return null;
+            throw new ProductNotFoundException(barcode);
         }
 
         _db.Products.Add((Product)searchedProduct);
-        _logger.LogDebug("Product with barcode {Barcode} added to the database.", barcode);
+        _logger.LogDebug("Product with barcode {0} added to the database.", barcode);
         await _db.SaveChangesAsync();
 
         return searchedProduct;
@@ -44,8 +45,8 @@ public class ProductRepository
     /// Retrieves products by a text search. If the products are not found in the database, they will be searched using the OpenFoodSearchEngineService.
     /// </summary>
     /// <param name="text">The text to search for.</param>
-    /// <returns>A list of products if found; otherwise, null.</returns>
-    public async Task<List<IProduct>?> GetByTextAsync(string text)
+    /// <returns>A list of products if found; otherwise, throws a ProductNotFoundException.</returns>
+    public async Task<IEnumerable<IProduct>?> GetByTextAsync(string text)
     {
         var cachedProducts = await _db.Products
             .Where(product => product.Name.Contains(text))
@@ -53,13 +54,13 @@ public class ProductRepository
 
         if (cachedProducts.Count > 0)
         {
-            return cachedProducts.Cast<IProduct>().ToList();
+            return cachedProducts.Cast<IProduct>();
         }
 
         var searchedProduct = await _searchEngine.SearchByTextAsync(text);
         if (searchedProduct == null || searchedProduct.Count == 0)
         {
-            return null;
+            throw new ProductNotFoundException(text);
         }
         return searchedProduct;
     }

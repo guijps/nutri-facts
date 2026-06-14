@@ -5,7 +5,7 @@ using System.Security.Claims;
 namespace NutriFacts.Controllers;
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/entry")]
 public class EntryController : ControllerBase
 {
     private readonly EntryApplicationService _entryApplicationService;
@@ -20,8 +20,8 @@ public class EntryController : ControllerBase
         return User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
-    [HttpPost("/update")]
-    public async Task<IActionResult> Update(string entryId, double quantity)
+    [HttpPut("{entryId:guid}")]
+    public async Task<IActionResult> Update(Guid entryId, [FromBody] UpdateEntry updateEntry)
     {
         var userId = GetUserId();
         if (string.IsNullOrWhiteSpace(userId))
@@ -29,12 +29,12 @@ public class EntryController : ControllerBase
             return Unauthorized();
         }
 
-        await _entryApplicationService.UpdateAsync(entryId, userId, quantity);
+        await _entryApplicationService.UpdateAsync(entryId, userId, updateEntry.Quantity);
         return Ok();
     }
 
-    [HttpDelete("/delete")]
-    public async Task<IActionResult> Delete(string entryId)
+    [HttpDelete("{entryId:guid}")]
+    public async Task<IActionResult> Delete(Guid entryId)
     {
         var userId = GetUserId();
         if (string.IsNullOrWhiteSpace(userId))
@@ -46,8 +46,8 @@ public class EntryController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("/set")]
-    public async Task<IActionResult> Set(string code, double quantity)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateEntry createEntry)
     {
         var userId = GetUserId();
         if (string.IsNullOrWhiteSpace(userId))
@@ -55,24 +55,11 @@ public class EntryController : ControllerBase
             return Unauthorized();
         }
 
-        await _entryApplicationService.AddAsync(code, userId, quantity);
+        await _entryApplicationService.AddAsync(createEntry.ProductId, userId, createEntry.Quantity);
         return Ok();
     }
 
-    [HttpGet("/history")]
-    public async Task<IActionResult> GetHistory()
-    {
-        var userId = GetUserId();
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
-
-        var history = await _entryApplicationService.GetHistoryAsync(userId);
-        return Ok(history);
-    }
-
-    [HttpGet("/all")]
+    [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         var userId = GetUserId();
@@ -85,7 +72,20 @@ public class EntryController : ControllerBase
         return Ok(entries);
     }
 
-    [HttpGet("/all-facts")]
+    [HttpGet("history")]
+    public async Task<IActionResult> GetHistory()
+    {
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Unauthorized();
+        }
+
+        var history = await _entryApplicationService.GetHistoryAsync(userId);
+        return Ok(history);
+    }
+
+    [HttpGet("today-facts")]
     public async Task<IActionResult> GetTodayFacts()
     {
         var userId = GetUserId();
@@ -97,5 +97,4 @@ public class EntryController : ControllerBase
         var facts = await _entryApplicationService.GetTodayFactsAsync(userId);
         return Ok(facts);
     }
-
 }

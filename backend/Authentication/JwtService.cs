@@ -6,11 +6,17 @@ using Microsoft.IdentityModel.Tokens;
 namespace NutriFacts.Auth;
 public class JwtService
 {
+    private readonly string _secretKey;
+
+    public JwtService(string secretKey)
+    {
+        _secretKey = secretKey;
+    }
     public string GenerateToken(AppUser user)
     {
         var key =
             new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("a9F!2kL8pQ7xZ1mV3sD6rT9yW4nB8cX0"));//sensitive stuff 
+                Encoding.UTF8.GetBytes(_secretKey));
 
         var creds =
             new SigningCredentials(
@@ -21,10 +27,14 @@ public class JwtService
             new JwtSecurityToken(
                 claims: new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Email, user.Email)
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat,
+                        DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+                        ClaimValueTypes.Integer64)
                 },
-                expires: DateTime.Now.AddDays(7),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
             );
 
