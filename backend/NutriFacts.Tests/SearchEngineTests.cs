@@ -1,49 +1,61 @@
 using NutriFacts.Service.Parser.OpenFood;
+using NutriFacts.Tests.Mocks;
 using Xunit;
 
 public class SearchEngineTests
 {
-        OpenFoodSearchEngineService _searchEngine;
-    public SearchEngineTests()
-    {
-        HttpClient httpClient = new HttpClient();
-        OpenFoodParser parser = new OpenFoodParser();
-        _searchEngine = new OpenFoodSearchEngineService(httpClient, parser);
-    
-    }
-
     [Fact]
     public async Task SearchByTextAsync_ValidText_ReturnsProducts()
     {
-        var text = "Nutella"; 
+        var text = "chocolate";
+        var mockHandler = new MockHttpMessageHandler();
+        mockHandler.RegisterResponseFromFile(text, ResolveFixturePath("openfoods_list_data_parse.json"));
 
-        var products = await _searchEngine.SearchByTextAsync(text);
+        var httpClient = new HttpClient(mockHandler);
+        var parser = new OpenFoodParser();
+        var searchEngine = new OpenFoodSearchEngineService(httpClient, parser);
+
+        var products = await searchEngine.SearchByTextAsync(text);
 
         Assert.NotNull(products);
         Assert.True(products!.Count > 0);
-        Assert.Contains(products, p => p.Name.Contains("Nutella", StringComparison.OrdinalIgnoreCase));
+        Assert.All(products, p => Assert.False(string.IsNullOrWhiteSpace(p.Name)));
     }
 
 
     [Fact]
     public async Task SearchByBarcodeAsync_ValidBarcode_ReturnsProduct()
     {
-        var barcode = "3017620422003"; 
+        var barcode = "3017620422003";
+        var mockHandler = new MockHttpMessageHandler();
+        mockHandler.RegisterResponseFromFile(barcode, ResolveFixturePath("openfoods_data_parse_1.json"));
 
-        var product = await _searchEngine.SearchByBarcodeAsync(barcode);
+        var httpClient = new HttpClient(mockHandler);
+        var parser = new OpenFoodParser();
+        var searchEngine = new OpenFoodSearchEngineService(httpClient, parser);
+
+        var product = await searchEngine.SearchByBarcodeAsync(barcode);
 
         Assert.NotNull(product);
-        Assert.Equal("Nutella", product!.Name);
+        Assert.Equal("Flocons d'avoine", product!.Name);
     }
 
     [Fact]
-    public async Task SearchByBarcodeAsync_InvalidBarcode_ReturnsNull()
+    public async Task SearchByBarcodeAsync_InvalidBarcode_ThrowsHttpRequestException()
     {
-
         var barcode = "0000000000000"; // Invalid barcode
+        var mockHandler = new MockHttpMessageHandler();
+        var httpClient = new HttpClient(mockHandler);
+        var parser = new OpenFoodParser();
+        var searchEngine = new OpenFoodSearchEngineService(httpClient, parser);
 
-        var product = await _searchEngine.SearchByBarcodeAsync(barcode);
+        await Assert.ThrowsAsync<HttpRequestException>(() => searchEngine.SearchByBarcodeAsync(barcode));
+    }
 
-        Assert.Null(product);
+    private static string ResolveFixturePath(string fileName)
+    {
+        return Path.Combine(AppContext.BaseDirectory, fileName)
+            .Replace("bin\\Debug\\net10.0", string.Empty)
+            .Replace("bin\\Release\\net10.0", string.Empty);
     }
 }

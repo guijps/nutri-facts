@@ -1,6 +1,7 @@
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using NutriFacts.Domain.Exceptions;
 using NutriFacts.Service;
 using NutriFacts.Service.Parser.OpenFood;
 using System.Net;
@@ -44,9 +45,9 @@ public class EntryApplicationServiceTests
 		using var db = CreateDbContext();
 		var service = CreateEntryApplicationService(db, "{}");
 
-		var ex = await Assert.ThrowsAsync<Exception>(() => service.AddAsync("0000000000000", "user-1", 1));
+		var ex = await Assert.ThrowsAsync<ProductNotFoundException>(() => service.AddAsync("0000000000000", "user-1", 1));
 
-		Assert.Equal("Product not found for the given barcode.", ex.Message);
+		Assert.Equal("Product not found for barcode '0000000000000'.", ex.Message);
 		Assert.Empty(await db.ProductEntries.ToListAsync());
 	}
 
@@ -117,7 +118,7 @@ public class EntryApplicationServiceTests
 		var parser = new OpenFoodParser();
 		var searchEngine = new OpenFoodSearchEngineService(httpClient, parser);
 		var productRepository = new ProductRepository(NullLogger<ProductRepository>.Instance, db, searchEngine);
-		var productApplicationService = new ProductApplicationService(productRepository, searchEngine, NullLogger<ProductApplicationService>.Instance);
+		var productApplicationService = new ProductApplicationService(productRepository, NullLogger<ProductApplicationService>.Instance);
 		var entryRepository = new EntryRepository(db);
 
 		return new EntryApplicationService(entryRepository, productApplicationService);
